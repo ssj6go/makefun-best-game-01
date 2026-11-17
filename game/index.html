@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOTHFLAME — Guard the Last Lantern</title>
+<meta name="description" content="MOTHFLAME: a twin-stick arena survival game. You are Ember, a moth of living flame, guarding the last lantern against ten waves of the Gloom.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="game" width="1280" height="720"></canvas>
+
+  <button id="btn-mute" aria-label="Mute">🔊</button>
+
+  <!-- Title -->
+  <div id="overlay-title" class="overlay">
+    <div class="panel title-panel">
+      <div class="eyebrow">A MOTH · A LANTERN · TEN WAVES OF NIGHT</div>
+      <h1 class="game-title">MOTHFLAME</h1>
+      <p class="tagline">Guard the last lantern. Burn back the Gloom.</p>
+      <p id="best-line" class="best-line"></p>
+      <button id="btn-start" class="btn-primary">BEGIN THE FLIGHT</button>
+      <div class="controls">
+        <div><span class="key">W A S D</span> fly</div>
+        <div><span class="key">MOUSE</span> aim</div>
+        <div><span class="key">HOLD CLICK</span> shoot flame</div>
+        <div><span class="key">SPACE</span> dash</div>
+        <div><span class="key">1 · 2 · 3</span> choose upgrade</div>
+        <div><span class="key">P</span> pause &nbsp; <span class="key">M</span> mute</div>
+      </div>
+      <p class="hint">Fallen foes drop embers. Gather them, level up, and grow
+      brighter — then face the Gloom Herald at wave 10.</p>
+    </div>
+  </div>
+
+  <!-- Level-up choice -->
+  <div id="overlay-levelup" class="overlay hidden">
+    <div class="panel levelup-panel">
+      <h2 class="levelup-title">THE FLAME GROWS</h2>
+      <p class="levelup-sub">Choose one gift of the lantern.</p>
+      <div id="levelup-cards" class="cards"></div>
+    </div>
+  </div>
+
+  <!-- Pause -->
+  <div id="overlay-pause" class="overlay hidden">
+    <div class="panel pause-panel">
+      <h2 class="pause-title">PAUSED</h2>
+      <p class="pause-sub">The night waits. The lantern does not go out.</p>
+      <div class="btn-row">
+        <button id="btn-resume" class="btn-primary">RESUME</button>
+        <button id="btn-restart-pause" class="btn-ghost">RESTART RUN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Victory / defeat -->
+  <div id="overlay-end" class="overlay hidden">
+    <div class="panel end-panel">
+      <h2 id="end-title" class="end-title win">THE LANTERN ENDURES</h2>
+      <p id="end-sub" class="end-sub"></p>
+      <div id="end-stats" class="stats"></div>
+      <button id="btn-again" class="btn-primary">FLY AGAIN</button>
+      <p class="hint">or press R to restart</p>
+    </div>
+  </div>
+</div>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
