@@ -415,6 +415,7 @@ export class Game {
   }
 
   onEnemyKilled(enemy) {
+    enemy.paid = true;
     this.kills += 1;
     this.combo.count += 1;
     this.combo.timer = COMBO_WINDOW;
@@ -452,7 +453,7 @@ export class Game {
     // Flame bolts against foes.
     for (const b of this.bullets.player) {
       for (const e of this.enemies.list) {
-        if (e.spawnAnim > 0 || b.hit.has(e.id)) continue;
+        if (e.spawnAnim > 0 || e.dead || b.hit.has(e.id)) continue;
         const rr = b.radius + e.radius;
         if ((b.x - e.x) ** 2 + (b.y - e.y) ** 2 < rr * rr) {
           b.hit.add(e.id);
@@ -468,7 +469,9 @@ export class Game {
       }
     }
 
-    // Reap the dead (splitters leave children).
+    // Reap the dead (splitters leave children). Foes that died by burn
+    // never passed through damageEnemy, so pay them out here — bullet
+    // kills are already marked paid and are skipped.
     const dead = this.enemies.reap((splitter) => {
       for (let i = 0; i < ENEMY_TYPES.splitter.children; i++) {
         const a = Math.random() * Math.PI * 2;
@@ -481,7 +484,9 @@ export class Game {
         );
       }
     });
-    void dead;
+    for (const e of dead) {
+      if (!e.paid) this.onEnemyKilled(e);
+    }
 
     if (p.dead) return;
 

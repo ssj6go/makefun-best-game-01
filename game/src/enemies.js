@@ -36,6 +36,8 @@ export class Enemies {
       damage: def.damage,
       xp: def.xp,
       score: def.score,
+      dead: false, // set on the killing blow; corpses stop taking hits
+      paid: false, // set once the kill has paid out score and embers
       flash: 0, // white hit-flash timer
       burn: 0, // burn damage per second
       burnTime: 0,
@@ -65,12 +67,15 @@ export class Enemies {
     return this.list.length + this.portals.length;
   }
 
-  // Damage an enemy; returns true when it died.
+  // Damage an enemy; returns true only on the killing blow, so a corpse
+  // hit by a second bolt in the same frame pays out just once.
   hurt(enemy, amount, crit) {
+    if (enemy.dead) return false;
     enemy.hp -= amount;
     enemy.flash = 0.12;
     if (enemy.hp <= 0) {
       enemy.hp = 0;
+      enemy.dead = true;
       return true;
     }
     return false;
@@ -98,7 +103,10 @@ export class Enemies {
       if (e.burnTime > 0) {
         e.burnTime -= dt;
         e.hp -= e.burn * dt;
+        // Burn deaths pay out at reap time (see game.js), not here.
+        if (e.hp <= 0) { e.hp = 0; e.dead = true; }
       }
+      if (e.dead) continue;
       const dx = player.x - e.x;
       const dy = player.y - e.y;
       const d = Math.hypot(dx, dy) || 1;
