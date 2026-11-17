@@ -45,6 +45,8 @@ export class Game {
     this.offers = [];
     this.endTimer = 0;
     this.titleOrbit = 0;
+    this.titleOrbitRx = 210; // attract-mode orbit radii (the title shot
+    this.titleOrbitRy = 130; // widens them so the moth shows beside the panel)
     this.best = this.loadBest();
 
     this.input.onFirstGesture = () => {
@@ -252,8 +254,8 @@ export class Game {
     if (this.state === 'title') {
       // Attract mode: the moth circles the lantern while embers drift.
       this.titleOrbit += dt * 0.5;
-      this.player.x = WORLD.width / 2 + Math.cos(this.titleOrbit) * 210;
-      this.player.y = WORLD.height / 2 + Math.sin(this.titleOrbit) * 130;
+      this.player.x = WORLD.width / 2 + Math.cos(this.titleOrbit) * this.titleOrbitRx;
+      this.player.y = WORLD.height / 2 + Math.sin(this.titleOrbit) * this.titleOrbitRy;
       this.player.angle = this.titleOrbit + Math.PI / 2;
       this.player.wingPhase += dt * 14;
       this.particles.update(dt);

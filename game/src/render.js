@@ -294,7 +294,7 @@ export class Renderer {
 
       // Hit flash.
       if (e.flash > 0) {
-        ctx.globalAlpha = Math.min(0.8, e.flash * 6);
+        ctx.globalAlpha = Math.min(0.55, e.flash * 4);
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
@@ -407,25 +407,28 @@ export class Renderer {
     ctx.fillRect(0, WORLD.height - 22, WORLD.width, 22);
     ctx.fillStyle = '#2dd4bf';
     ctx.fillRect(0, WORLD.height - 22, WORLD.width * xpFrac, 22);
-    ctx.fillStyle = '#06281f';
     ctx.font = '700 12px "Trebuchet MS", system-ui, sans-serif';
     ctx.textAlign = 'center';
+    ctx.strokeStyle = 'rgba(6,20,16,0.9)';
+    ctx.lineWidth = 3;
+    ctx.strokeText(`EMBER ${Math.floor(p.xp)} / ${p.xpNext} — NEXT FLAME`, WORLD.width / 2, WORLD.height - 7);
+    ctx.fillStyle = '#e6fffa';
     ctx.fillText(`EMBER ${Math.floor(p.xp)} / ${p.xpNext} — NEXT FLAME`, WORLD.width / 2, WORLD.height - 7);
 
-    // Bottom-left: dash cooldown pip.
+    // Bottom-left: dash cooldown pip: label above, bar below.
     const dashFrac = 1 - p.dashCd / p.stats.dashCooldown;
     ctx.fillStyle = 'rgba(10,6,24,0.72)';
     roundRect(ctx, 18, WORLD.height - 66, 132, 34, 10);
     ctx.fill();
     ctx.fillStyle = p.dashReady ? '#5eead4' : PALETTE.textDim;
-    ctx.font = '700 13px "Trebuchet MS", system-ui, sans-serif';
+    ctx.font = '700 12px "Trebuchet MS", system-ui, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText(p.dashReady ? 'DASH READY' : 'DASH…', 30, WORLD.height - 44);
+    ctx.fillText(p.dashReady ? 'DASH READY [SPACE]' : 'DASH…', 28, WORLD.height - 50);
     ctx.fillStyle = '#2a1b3d';
-    roundRect(ctx, 104, WORLD.height - 56, 34, 8, 4);
+    roundRect(ctx, 28, WORLD.height - 44, 112, 7, 3);
     ctx.fill();
     ctx.fillStyle = '#5eead4';
-    roundRect(ctx, 104, WORLD.height - 56, 34 * dashFrac, 8, 4);
+    roundRect(ctx, 28, WORLD.height - 44, 112 * dashFrac, 7, 3);
     ctx.fill();
 
     // Bottom-right: mute + pause hints.

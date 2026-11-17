@@ -69,17 +69,24 @@ export class Bullets {
 
   draw(ctx) {
     for (const b of this.player) {
-      const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.radius * 2.4);
-      grad.addColorStop(0, '#fff7d6');
-      grad.addColorStop(0.4, '#ffd166');
-      grad.addColorStop(1, 'rgba(255,140,60,0)');
-      ctx.fillStyle = grad;
+      // A flame bolt reads as a streak along its flight, with a bright head.
+      const speed = Math.hypot(b.vx, b.vy) || 1;
+      const tx = b.x - (b.vx / speed) * 26;
+      const ty = b.y - (b.vy / speed) * 26;
+      const grad = ctx.createLinearGradient(tx, ty, b.x, b.y);
+      grad.addColorStop(0, 'rgba(255,140,60,0)');
+      grad.addColorStop(0.55, 'rgba(255,180,80,0.75)');
+      grad.addColorStop(1, '#fff3c4');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = b.radius * 1.5;
+      ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.arc(b.x, b.y, b.radius * 2.4, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
       ctx.fillStyle = b.crit ? '#ffffff' : '#ffe9a8';
       ctx.beginPath();
-      ctx.arc(b.x, b.y, b.radius * 0.7, 0, Math.PI * 2);
+      ctx.arc(b.x, b.y, b.radius * 0.75, 0, Math.PI * 2);
       ctx.fill();
     }
     for (const b of this.enemy) {

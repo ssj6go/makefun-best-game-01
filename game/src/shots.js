@@ -12,7 +12,10 @@ export function setupShot(game, scene, seed = 1) {
 
   if (scene === 'title') {
     game.showTitle();
-    game.titleOrbit = 2.2;
+    // Wide orbit, moth high on the left where the panel leaves sky.
+    game.titleOrbitRx = 470;
+    game.titleOrbitRy = 270;
+    game.titleOrbit = 4.35;
     game.time = 2.5;
     // Let the motes and the orbiting moth settle for a few frames.
     for (let i = 0; i < 40; i++) game.update(1 / 60);
@@ -43,6 +46,7 @@ export function setupShot(game, scene, seed = 1) {
     game.shotsFired = 420;
     game.shotsHit = 301;
     game.waves.wave = 10;
+    game.particles.clear(); // no stray damage numbers over the end panel
     game.endRun(true);
     game.draw();
     window.__shotReady = true;
@@ -55,6 +59,7 @@ export function setupShot(game, scene, seed = 1) {
     game.shotsFired = 260;
     game.shotsHit = 171;
     game.waves.wave = 7;
+    game.particles.clear();
     game.endRun(false);
     game.draw();
     window.__shotReady = true;
@@ -95,6 +100,7 @@ function stageFight(game, rng, { wave, level, score, kills }) {
     ['wisp', 220, 160], ['spitter', 1010, 240], ['spitter', 180, 480],
     ['brute', 1080, 420], ['splitter', 700, 150], ['splitter', 300, 580],
     ['dasher', 760, 560], ['dasher', 1020, 120], ['wisp', 620, 620],
+    ['wisp', 660, 300], ['wisp', 620, 510], ['wisp', 850, 380],
   ];
   for (const [kind, x, y] of staging) {
     game.enemies.spawn(kind, x, y, wave, true);
@@ -107,7 +113,8 @@ function stageFight(game, rng, { wave, level, score, kills }) {
   const dasher = game.enemies.list.find((e) => e.kind === 'dasher');
   if (dasher) dasher.state.telegraph = 0.4;
 
-  // Bolts in flight toward the swarm.
+  // Bolts in flight toward the swarm — fired first, then aged a little so
+  // they read mid-flight rather than at the muzzle.
   for (let i = 0; i < 5; i++) {
     const a = -0.5 + i * 0.22;
     game.bullets.firePlayer(500 + i * 26, 392 - i * 8, a, {
@@ -128,17 +135,11 @@ function stageFight(game, rng, { wave, level, score, kills }) {
     });
   }
 
-  // Kill flashes and drifting embers for life.
-  game.particles.burst(880, 300, '#8b7bd8', 16, 200, 0.8, 4);
-  game.particles.burst(700, 150, '#6d28d9', 10, 160, 0.7, 3);
-  game.particles.addText(880, 280, '24', '#ffd166', 16);
-  game.particles.addText(700, 130, 'CRIT 48', '#ffffff', 18);
-  game.particles.trail(470, 400, '#ffd166', 5);
-
-  // Advance a few fixed steps so motion blur of life is in the frame, but
-  // keep the staged tableau: enemies drift, bolts fly, nothing resolves.
+  // Advance a few fixed steps so the bolts travel and the swarm drifts,
+  // then add the fresh bursts and damage numbers last so they are bright
+  // in the frame instead of half-faded.
   game.state = 'playing';
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < 8; i++) {
     game.time += 1 / 60;
     game.particles.update(1 / 60);
     game.bullets.update(1 / 60);
@@ -147,4 +148,9 @@ function stageFight(game, rng, { wave, level, score, kills }) {
       e.y += Math.cos(i * 0.08 + e.id) * 0.4;
     }
   }
+  game.particles.burst(880, 300, '#8b7bd8', 16, 200, 0.8, 4);
+  game.particles.burst(700, 150, '#6d28d9', 10, 160, 0.7, 3);
+  game.particles.addText(880, 280, '24', '#ffd166', 16);
+  game.particles.addText(700, 130, 'CRIT 48', '#ffffff', 18);
+  game.particles.trail(470, 400, '#ffd166', 5);
 }
